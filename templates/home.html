@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HT6 Project</title>
+</head>
+<body>
+	<h1>
+		HT6 Project
+	</h1>
+	<h2>
+		Upload
+	</h2>
+	<form action="/api/v1/upload" method="POST" enctype="multipart/form-data">
+		<input type="file" name="file"/><br><br>
+		<input type="submit" value="Upload">
+	</form>
+	<h2>
+		Transcriptions
+	</h2>
+	<form id="transcript-form" onsubmit="getTranscript();return false">
+		<ul style="list-style-type:none">
+			{% for transcription in content %}
+				<li>
+					<input type="radio" value="{{ transcription }}" name="selected_transcript">
+						{{ transcription }}
+					</input>
+				</li>
+			{% endfor %}
+			<li><input type="submit" value="Show Transcript"></li>
+		</ul>
+	</form>
+	<div id="displayedTranscript" style="width:1000px"></div>
+	<h2>
+		Summaries
+	</h2>
+	<form id="summary-form" onsubmit="getSummary();return false">
+		<ul style="list-style-type:none">
+			{% for transcription in content %}
+				<li>
+					<input type="radio" value="{{ transcription }}" name="selected_summary">
+						{{ transcription }}
+					</input>
+				</li>
+			{% endfor %}
+			<li><input type="submit" value="Get Summary"></li>
+		</ul>
+	</form>
+	<div id="displayedSummary" style="width:1000px"></div>
+</body>
+</html>
+<script>
+	// async function startRec() {
+	// 	const res = await fetch('http://127.0.0.1:5000/api/v1/start-recording', {method: 'POST'})
+	// }
+	// async function stopRec() {
+	// 	const res = await fetch('http://127.0.0.1:5000/api/v1/stop-recording', {method: 'POST'})
+	// }
+	async function getTranscript() {
+		const selected_transcript = document.querySelector('input[name="selected_transcript"]:checked').value
+		const res = await fetch('http://127.0.0.1:5000/api/v1/get-transcript?selected_transcript='.concat(selected_transcript), {method: 'GET'})
+		const json = await res.json()
+		document.getElementById('displayedTranscript').innerHTML = json.transcript
+	}
+	async function getSummary() {
+		const selected_summary = document.querySelector('input[name="selected_summary"]:checked').value
+		const res = await fetch('http://127.0.0.1:5000/api/v1/get-summary?selected_summary='.concat(selected_summary), {method: 'GET'})
+		const json = await res.json()
+		document.getElementById('displayedSummary').innerHTML = json.summary
+	}
+</script>
